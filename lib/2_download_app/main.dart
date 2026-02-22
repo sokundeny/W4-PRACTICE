@@ -9,42 +9,48 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: themeProvider,
+      builder: (_, _) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: appTheme,
+          home: const Home(),
+        );
+      },
+    );
+  }
 }
 
-class _MyAppState extends State<MyApp> {
+class Home extends StatefulWidget {
+  const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
   int _currentIndex = 1;
 
-  final List<Widget> _pages =  [DownloadsScreen(), SettingsScreen()];
+  final List<Widget> _pages = [DownloadsScreen(), SettingsScreen()];
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: appTheme,
-      home: Scaffold(
-        body: _pages[_currentIndex],
-
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-          selectedItemColor: currentThemeColor.color,
-          items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Downloads'),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.search),
-              label: 'Settings',
-            ),
-          ],
-        ),
+    return Scaffold(
+      body: _pages[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        selectedItemColor: themeProvider.mainColor,
+        onTap: (index) => setState(() => _currentIndex = index),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Downloads'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
+        ],
       ),
     );
   }
